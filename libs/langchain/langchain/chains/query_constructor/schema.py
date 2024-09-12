@@ -1,4 +1,4 @@
-from langchain.pydantic_v1 import BaseModel
+from langchain_core.pydantic_v1 import BaseModel
 
 
 class AttributeInfo(BaseModel):
@@ -9,7 +9,5 @@ class AttributeInfo(BaseModel):
     type: str
 
     class Config:
-        """Configuration for this pydantic object."""
-
         arbitrary_types_allowed = True
         frozen = True

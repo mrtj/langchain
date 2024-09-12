@@ -1,9 +1,8 @@
-
-# self-query-qdrant
+# Self-query - Qdrant
 
 This template performs [self-querying](https://python.langchain.com/docs/modules/data_connection/retrievers/self_query/) 
-using Qdrant and OpenAI. By default, it uses an artificial dataset of 10 documents, but you can replace it with your own dataset.
-
+``using `Qdrant` and OpenAI. By default, it uses an artificial dataset of 10 documents, but you can replace it with your own dataset.
+``
 ## Environment Setup
 
 Set the `OPENAI_API_KEY` environment variable to access the OpenAI models.
@@ -63,7 +62,7 @@ You can find the documents in the `packages/self-query-qdrant/self_query_qdrant/
 Here is one of the documents:
 
 ```python
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 Document(
     page_content="Spaghetti with meatballs and tomato sauce",
@@ -87,15 +86,16 @@ If you want to customize the template, you can do it by passing the parameters t
 in the `app/server.py` file:
 
 ```python
-from langchain.llms import Cohere
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.llms import Cohere
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains.query_constructor.schema import AttributeInfo
 
 from self_query_qdrant.chain import create_chain
 
+model_name = "sentence-transformers/all-mpnet-base-v2"
 chain = create_chain(
     llm=Cohere(),
-    embeddings=HuggingFaceEmbeddings(),
+    embeddings=HuggingFaceEmbeddings(model_name=model_name),
     document_contents="Descriptions of cats, along with their names and breeds.",
     metadata_field_info=[
         AttributeInfo(name="name", description="Name of the cat", type="string"),
@@ -108,13 +108,14 @@ chain = create_chain(
 The same goes for the `initialize` function that creates a Qdrant collection and indexes the documents:
 
 ```python
-from langchain.schema import Document
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_core.documents import Document
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from self_query_qdrant.chain import initialize
 
+model_name = "sentence-transformers/all-mpnet-base-v2"
 initialize(
-    embeddings=HuggingFaceEmbeddings(),
+    embeddings=HuggingFaceEmbeddings(model_name=model_name),
     collection_name="cats",
     documents=[
         Document(
@@ -146,7 +147,7 @@ langchain serve
 
 ### Local Server
 
-This will start the FastAPI app with a server running locally at 
+This will start the FastAPI app with a server running locally at
 [http://localhost:8000](http://localhost:8000)
 
 You can see all templates at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
